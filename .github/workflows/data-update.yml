@@ -1,0 +1,35 @@
+name: Data Update Pipeline
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Daily at 3 AM UTC
+  workflow_dispatch: # Manual trigger option
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r src/backend/requirements.txt
+        pip install azure-cosmos pandas
+    
+    - name: Run data update script
+      env:
+        COSMOS_DB_CONNECTION_STRING: ${{ secrets.COSMOS_DB_CONNECTION_STRING }}
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      run: |
+        python src/backend/scripts/update_media_data.py
+        python src/backend/scripts/update_user_preferences.py
