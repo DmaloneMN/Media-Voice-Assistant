@@ -1,13 +1,11 @@
-variable "client_id" {
-  description = "Azure service principal client ID"
+variable "resource_group_name" {
+  description = "Name of the resource group"
   type        = string
-  sensitive   = true
 }
 
-variable "client_secret" {
-  description = "Azure service principal client secret"
+variable "location" {
+  description = "Azure region"
   type        = string
-  sensitive   = true
 }
 
 variable "environment" {
