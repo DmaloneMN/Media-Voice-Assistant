@@ -73,7 +73,7 @@ module "kubernetes" {
   cluster_name       = "media-assistant-aks"
   location           = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name  # This should be in the module's variables.tf
-  client_id          = var.client_id
-  client_secret      = var.client_secret
+  #client_id          = var.client_id
+  #client_secret      = var.client_secret
   node_count         = 2
 }
