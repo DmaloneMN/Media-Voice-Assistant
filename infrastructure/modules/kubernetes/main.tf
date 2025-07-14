@@ -15,8 +15,4 @@ resource "azurerm_kubernetes_cluster" "main" {
     client_id     = var.client_id
     client_secret = var.client_secret
   }
-
-  identity {
-    type = "SystemAssigned"
-  }
 }
