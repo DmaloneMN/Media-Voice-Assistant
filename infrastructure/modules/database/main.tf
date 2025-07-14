@@ -1,26 +1,34 @@
-resource "azurerm_cosmosdb_sql_container" "media" {
-  name                = "MediaCatalog"
+resource "azurerm_cosmosdb_account" "main" {
+  name                = var.cosmosdb_account_name
+  location            = var.location
   resource_group_name = var.resource_group_name
-  account_name        = azurerm_cosmosdb_account.main.name
-  database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/partitionKey"
-  throughput          = 400
+  offer_type          = "Standard"
+  kind                = "MongoDB"
 
-  indexing_policy {
-    indexing_mode = "consistent"
+  consistency_policy {
+    consistency_level = "Session"
+  }
 
-    included_path {
-      path = "/*"
-    }
+  geo_location {
+    location          = var.location
+    failover_priority = 0
   }
 }
 
-# Add a separate container for user preferences
-resource "azurerm_cosmosdb_sql_container" "user_preferences" {
-  name                = "UserPreferences"
+resource "azurerm_cosmosdb_mongo_database" "main" {
+  name                = "MediaDatabase"
   resource_group_name = var.resource_group_name
   account_name        = azurerm_cosmosdb_account.main.name
-  database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_path  = "/userId"
-  throughput          = 400
+}
+
+resource "azurerm_cosmosdb_mongo_collection" "media" {
+  name                = "MediaCatalog"
+  resource_group_name = var.resource_group_name
+  account_name        = azurerm_cosmosdb_account.main.name
+  database_name       = azurerm_cosmosdb_mongo_database.main.name
+
+  index {
+    keys   = ["_id"]
+    unique = true
+  }
 }
