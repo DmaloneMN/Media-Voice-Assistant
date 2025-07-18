@@ -28,7 +28,7 @@ variable "vm_size" {
 variable "kubernetes_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.29"
+  default     = "1.27"
 }
 
 # Only needed if using service principal
