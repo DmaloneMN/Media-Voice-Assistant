@@ -22,13 +22,13 @@ variable "node_count" {
 variable "vm_size" {
   description = "VM size for nodes"
   type        = string
-  default     = "Standard_D2_v2"
+  default     = "Standard_D2_v3"
 }
 
 variable "kubernetes_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.27"
+  default     = "1.32.5"
 }
 
 # Only needed if using service principal
