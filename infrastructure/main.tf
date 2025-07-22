@@ -89,8 +89,8 @@ resource "azurerm_app_service_plan" "backend" {
   reserved            = true  # Required for Linux Function Apps
 
   sku {
-    tier = "Dynamic"
-    size = "Y1"  # Consumption plan
+    tier = "Basic"
+    size = "B1
   }
 }
 
