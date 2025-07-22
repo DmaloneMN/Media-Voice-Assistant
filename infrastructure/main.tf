@@ -77,6 +77,62 @@ module "kubernetes" {
   #client_secret      = var.client_secret
   node_count         = 2
 }
+# App Service Plan for Functions
+resource "azurerm_app_service_plan" "backend" {
+  name                = "media-assistant-func-plan"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  kind                = "Linux"
+  reserved            = true  # Required for Linux Function Apps
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"  # Consumption plan
+  }
+}
+
+# Storage Account for Functions
+resource "azurerm_storage_account" "backend" {
+  name                     = "mediafuncstore${random_string.suffix.result}"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+# Random suffix for unique names
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+# Cosmos DB Account (if missing)
+resource "azurerm_cosmosdb_account" "main" {
+  name                = "media-assistant-cosmos"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  offer_type          = "Standard"
+  kind                = "MongoDB"
+
+  consistency_policy {
+    consistency_level = "Session"
+  }
+
+  geo_location {
+    location          = azurerm_resource_group.main.location
+    failover_priority = 0
+  }
+}
+
+# Cognitive Services for Speech
+resource "azurerm_cognitive_account" "speech" {
+  name                = "media-assistant-speech"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  kind                = "SpeechServices"
+  sku_name            = "S0"
+}
 # Frontend Static Site
   resource "azurerm_static_site" "frontend" {
   name                = "media-assistant-frontend"
@@ -84,8 +140,7 @@ module "kubernetes" {
   location           = "EastUS"
 }
 
-# Backend Function App
-  resource "azurerm_function_app" "backend" {
+resource "azurerm_function_app" "backend" {
   name                       = "media-assistant-api"
   resource_group_name        = azurerm_resource_group.main.name
   location                   = azurerm_resource_group.main.location
@@ -94,4 +149,9 @@ module "kubernetes" {
   storage_account_access_key = azurerm_storage_account.backend.primary_access_key
   os_type                    = "linux"
   version                    = "~4"
+
+  app_settings = {
+    "COSMOS_DB_CONNECTION_STRING" = azurerm_cosmosdb_account.main.connection_strings[0]
+    "SPEECH_KEY"                 = azurerm_cognitive_account.speech.primary_access_key
+  }
 }
