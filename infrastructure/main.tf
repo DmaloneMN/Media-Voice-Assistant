@@ -90,7 +90,7 @@ resource "azurerm_app_service_plan" "backend" {
 
   sku {
     tier = "Basic"
-    size = "B1
+    size = "B1"
   }
 }
 
