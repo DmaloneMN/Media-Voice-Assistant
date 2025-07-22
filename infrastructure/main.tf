@@ -46,6 +46,7 @@ terraform {
     storage_account_name = "mediatfstate" # This will be replaced with the actual name after first apply
     container_name       = "tfstate"
     key                  = "prod.terraform.tfstate"
+    use_azuread_auth     = true  # Add this line
   }
 }
 
