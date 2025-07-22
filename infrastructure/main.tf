@@ -77,3 +77,21 @@ module "kubernetes" {
   #client_secret      = var.client_secret
   node_count         = 2
 }
+# Frontend Static Site
+  resource "azurerm_static_site" "frontend" {
+  name                = "media-assistant-frontend"
+  resource_group_name = azurerm_resource_group.main.name
+  location           = "EastUS"
+}
+
+# Backend Function App
+  resource "azurerm_function_app" "backend" {
+  name                       = "media-assistant-api"
+  resource_group_name        = azurerm_resource_group.main.name
+  location                   = azurerm_resource_group.main.location
+  app_service_plan_id        = azurerm_app_service_plan.backend.id
+  storage_account_name       = azurerm_storage_account.backend.name
+  storage_account_access_key = azurerm_storage_account.backend.primary_access_key
+  os_type                    = "linux"
+  version                    = "~4"
+}
