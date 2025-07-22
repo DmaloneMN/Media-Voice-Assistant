@@ -47,6 +47,8 @@ terraform {
     container_name       = "tfstate"
     key                  = "prod.terraform.tfstate"
     use_azuread_auth     = true  # Add this line
+    subscription_id      = "32cac44c-6e25-4b5c-8bb7-d8782197489b"
+    tenant_id            = "b1b5c504-6f69-4e15-9c40-ddea95f2b70b"
   }
 }
 
