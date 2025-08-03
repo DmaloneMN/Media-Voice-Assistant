@@ -1,10 +1,18 @@
-from azure.cosmos import CosmosClient
 import os
+from azure.cosmos import CosmosClient
+from dotenv import load_dotenv
 
-URL = os.getenv("COSMOS_URL")  # Get from: terraform output -raw cosmosdb_endpoint
-KEY = os.getenv("COSMOS_KEY")  # Get from: az cosmosdb keys list --name [NAME] --resource-group [RG]
+# Load environment variables
+load_dotenv()
 
+# Get credentials from environment
+URL = os.getenv("COSMOS_URL")  # Format: "https://YOUR_ACCOUNT.documents.azure.com:443/"
+KEY = os.getenv("COSMOS_KEY")  # Primary or secondary key
+
+# Initialize client with proper credential format
 client = CosmosClient(URL, credential=KEY)
+
+# Database and container setup
 database = client.create_database_if_not_exists(id="MediaDatabase")
 
 # Users container
@@ -23,3 +31,5 @@ database.create_container_if_not_exists(
         'includedPaths': [{'path': '/*'}]
     }
 )
+
+print("Database and containers initialized successfully!")
