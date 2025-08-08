@@ -9,6 +9,9 @@ load_dotenv()
 URL = os.getenv("COSMOS_URL")  # Format: "https://YOUR_ACCOUNT.documents.azure.com:443/"
 KEY = os.getenv("COSMOS_KEY")  # Primary or secondary key
 
+if not URL or not KEY:
+    raise ValueError("Missing Cosmos DB credentials in environment variables")
+
 # Initialize client with proper credential format
 client = CosmosClient(URL, credential=KEY)
 
